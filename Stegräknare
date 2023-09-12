@@ -1,0 +1,13 @@
+input.onGesture(Gesture.Shake, function () {
+    steps += 1
+    radio.sendNumber(1)
+})
+let steps = 0
+basic.showLeds(`
+    . # # # .
+    . . # . .
+    . . . # .
+    . # # . .
+    . . . . .
+    `)
+radio.setGroup(52)

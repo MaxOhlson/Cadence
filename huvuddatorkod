@@ -1,0 +1,58 @@
+radio.onReceivedNumber(function (receivedNumber) {
+    steps += receivedNumber
+})
+input.onButtonPressed(Button.A, function () {
+    radio.sendNumber(2)
+    radio.sendValue("timer", 2)
+})
+input.onGesture(Gesture.Shake, function () {
+    radio.sendNumber(4)
+    time = 0
+    radio.sendNumber(1)
+    steps = 0
+})
+input.onButtonPressed(Button.AB, function () {
+    if (page == 0) {
+        basic.showString("Step")
+        basic.showNumber(steps)
+        page += 1
+    } else if (page == 1) {
+        basic.showString("Time")
+        basic.showNumber(time)
+        page += 1
+    } else if (page == 2) {
+        basic.showString("Cadence")
+        basic.showNumber(cadence)
+        page = 0
+    }
+})
+input.onButtonPressed(Button.B, function () {
+    radio.sendNumber(3)
+    radio.sendValue("timer", 3)
+})
+radio.onReceivedValue(function (name, value) {
+    time += value
+})
+let stepInMemory = 0
+let cadence = 0
+let page = 0
+let time = 0
+let steps = 0
+radio.setGroup(52)
+basic.showLeds(`
+    . . # . .
+    . # . # .
+    . # . # .
+    . # . # .
+    . . # . .
+    `)
+loops.everyInterval(60000, function () {
+    if (stepInMemory == 0) {
+        return;
+    }
+    cadence = 60 / stepInMemory
+    stepInMemory = 0
+})
+basic.forever(function () {
+    stepInMemory = steps
+})

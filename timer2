@@ -1,0 +1,30 @@
+radio.onReceivedNumber(function (receivedNumber) {
+    if (receivedNumber == 4) {
+        timerStart = "reset"
+    }
+})
+radio.onReceivedValue(function (timer, value) {
+    if (value == 2) {
+        timerStart = "true"
+    } else if (value == 3) {
+        timerStart = "false"
+    }
+})
+let time = 0
+let timerStart = ""
+radio.setGroup(52)
+loops.everyInterval(1000, function () {
+    if (timerStart == "true") {
+        time += 1
+        radio.sendValue("timer", 1)
+    }
+    if (timerStart == "false") {
+        time += 0
+    }
+    if (timerStart == "reset") {
+        time = 0
+    }
+})
+basic.forever(function () {
+    basic.showNumber(time)
+})

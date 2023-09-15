@@ -1,0 +1,76 @@
+function displaySettings () {
+    if (page == 0) {
+        basic.showString("Step")
+        basic.showNumber(steps)
+        page += 1
+    } else if (page == 1) {
+        basic.showString("Time")
+        basic.showNumber(time)
+        page += 1
+    } else if (page == 2) {
+        if (isTimerOn == 1) {
+            basic.showString("Cadence")
+            basic.showNumber(cadence)
+            page = 0
+        } else {
+            basic.showString("Cadence")
+            basic.showNumber(steps / (time / 60))
+            page = 0
+        }
+    }
+}
+radio.onReceivedNumber(function (receivedNumber) {
+    if (isTimerOn == 1) {
+        steps += receivedNumber
+        stepInMemory += receivedNumber
+    }
+})
+input.onButtonPressed(Button.A, function () {
+    isTimerOn = 1
+    radio.sendNumber(2)
+    radio.sendValue("timer", 2)
+})
+input.onButtonPressed(Button.AB, function () {
+    displaySettings()
+})
+input.onButtonPressed(Button.B, function () {
+    isTimerOn = 0
+    radio.sendNumber(3)
+    radio.sendValue("timer", 3)
+})
+input.onGesture(Gesture.Shake, function () {
+    radio.sendNumber(4)
+    time = 0
+    radio.sendNumber(1)
+    steps = 0
+})
+radio.onReceivedValue(function (name, value) {
+    if (name == "timer") {
+        time += 1
+    }
+})
+let stepInMemory = 0
+let cadence = 0
+let isTimerOn = 0
+let time = 0
+let steps = 0
+let page = 0
+page = 0
+radio.setGroup(52)
+basic.showLeds(`
+    . . # . .
+    . # . # .
+    . # . # .
+    . # . # .
+    . . # . .
+    `)
+basic.forever(function () {
+    stepInMemory = steps
+})
+loops.everyInterval(5000, function () {
+    if (stepInMemory == 0) {
+        return;
+    }
+    cadence = 12 * stepInMemory
+    stepInMemory = 0
+})
